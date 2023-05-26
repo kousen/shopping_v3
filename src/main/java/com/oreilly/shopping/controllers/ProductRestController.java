@@ -29,6 +29,12 @@ public class ProductRestController {
         return ResponseEntity.of(service.findProductById(id));
     }
 
+    @GetMapping(params = "min")
+    public List<Product> getProductsByMinPrice(@RequestParam(defaultValue = "0.0") double min) {
+        if (min < 0) throw new ProductMinimumPriceException(min);
+        return service.findAllProductsByMinPrice(min);
+    }
+
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         Product p = service.saveProduct(product);
