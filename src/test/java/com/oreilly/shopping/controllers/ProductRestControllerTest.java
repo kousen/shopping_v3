@@ -84,7 +84,7 @@ class ProductRestControllerTest {
                 .uri("/products?min=5.00")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBodyList(Product.class).hasSize(2)
+                .expectBodyList(Product.class).hasSize(3)
                 .consumeWith(System.out::println);
     }
 
