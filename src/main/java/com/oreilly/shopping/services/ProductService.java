@@ -36,11 +36,25 @@ public class ProductService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<Product> findAllProducts() {
         return productRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public Optional<Product> findProductById(Long id) {
         return productRepository.findById(id);
+    }
+
+    public Product saveProduct(Product product) {
+        return productRepository.save(product);
+    }
+
+    public void deleteProduct(Product p) {
+        productRepository.delete(p);
+    }
+
+    public void deleteAllProducts() {
+        productRepository.deleteAllInBatch();
     }
 }
