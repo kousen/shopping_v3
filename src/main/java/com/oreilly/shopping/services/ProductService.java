@@ -25,15 +25,7 @@ public class ProductService {
     }
 
     public void initializeDatabase() {
-        if (productRepository.count() == 0) {
-            productRepository.saveAll(
-                    List.of(
-                            new Product("TV tray", BigDecimal.valueOf(4.95)),
-                            new Product("Toaster", BigDecimal.valueOf(19.95)),
-                            new Product("Sofa", BigDecimal.valueOf(249.95))
-                    )
-            ).forEach(System.out::println);
-        }
+        // Don't need this (initialization in src/main/resources/data.sql)
     }
 
     @Transactional(readOnly = true)
@@ -58,7 +50,13 @@ public class ProductService {
         productRepository.deleteAllInBatch();
     }
 
+    @Transactional(readOnly = true)
     public List<Product> findAllProductsByMinPrice(double minPrice) {
         return productRepository.findAllByPriceGreaterThanEqual(BigDecimal.valueOf(minPrice));
+    }
+
+    @Transactional(readOnly = true)
+    public long countProducts() {
+        return productRepository.count();
     }
 }

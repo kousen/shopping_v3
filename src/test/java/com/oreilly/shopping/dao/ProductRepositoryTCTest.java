@@ -1,13 +1,11 @@
 package com.oreilly.shopping.dao;
 
-import com.oreilly.shopping.ContainersConfig;
 import com.oreilly.shopping.entities.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.context.annotation.Import;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -29,6 +27,14 @@ public class ProductRepositoryTCTest {
     private ProductRepository repository;
 
     @Test
+    void testSave() {
+        Product product = new Product("TV", BigDecimal.valueOf(500.00));
+        repository.saveAndFlush(product);
+
+        assertThat(repository.count()).isEqualTo(1L);
+    }
+
+    @Test
     void testRepository() {
         System.out.println("Test container running on port: " + postgresqlContainer.getFirstMappedPort());
         System.out.println("Test container running on host: " + postgresqlContainer.getHost());
@@ -39,11 +45,4 @@ public class ProductRepositoryTCTest {
         System.out.println("Test container running on database driver: " + postgresqlContainer.getDriverClassName());
     }
 
-    @Test
-    void testSave() {
-        Product product = new Product("TV", BigDecimal.valueOf(500.00));
-        repository.saveAndFlush(product);
-
-        assertThat(repository.count()).isEqualTo(1L);
-    }
 }

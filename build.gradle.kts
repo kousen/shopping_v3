@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.oreilly"
-version = "0.0.1-SNAPSHOT"
+version = "1.0"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -27,6 +27,11 @@ dependencies {
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
+    implementation("io.netty:netty-resolver-dns-native-macos:4.1.93.Final") {
+        artifact {
+            classifier = "osx-aarch_64"
+        }
+    }
 }
 
 tasks.withType<Test> {

@@ -35,6 +35,11 @@ public class ProductRestController {
         return service.findAllProductsByMinPrice(min);
     }
 
+    @GetMapping("count")
+    public long getProductCount() {
+        return service.countProducts();
+    }
+
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         Product p = service.saveProduct(product);
