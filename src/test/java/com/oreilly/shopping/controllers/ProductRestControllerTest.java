@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
@@ -30,18 +30,19 @@ class ProductRestControllerTest {
     private WebTestClient client;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private JdbcClient jdbcClient;
 
     private List<Long> getIds() {
-        return jdbcTemplate.queryForList("SELECT id FROM product", Long.class);
+        return jdbcClient.sql("SELECT id FROM product")
+                .query(Long.class)
+                .list();
     }
 
     private Product getProduct(Long id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM product WHERE id = ?",
-                (rs, row) -> new Product(rs.getLong("id"),
-                        rs.getString("name"),
-                        rs.getBigDecimal("price")),
-                id);
+        return jdbcClient.sql("SELECT * FROM product WHERE id = ?")
+                .param(id)
+                .query(Product.class)
+                .single();
     }
 
     @Test
@@ -133,7 +134,7 @@ class ProductRestControllerTest {
     void deleteSingleProduct() {
         List<Long> ids = getIds();
         System.out.println("There are " + ids.size() + " products in the database.");
-        if (ids.size() == 0) {
+        if (ids.isEmpty()) {
             System.out.println("No ids found");
             return;
         }
