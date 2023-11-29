@@ -5,11 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,12 +23,22 @@ class ProductRestControllerNaiveTest {
     @Autowired
     private WebTestClient client;
 
+    @Autowired
+    private JdbcClient jdbcClient;
+
+    private List<Long> getIds() {
+        return jdbcClient.sql("select id from product")
+                .query(Long.class)
+                .list();
+    }
+
     @Test
     void getAllProducts() {
         client.get()
                 .uri("/products")
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus()
+                .isOk()
                 .expectBodyList(Product.class)
                 .consumeWith(System.out::println);
     }
@@ -39,7 +51,8 @@ class ProductRestControllerNaiveTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(bat), Product.class)
                 .exchange()
-                .expectStatus().isCreated()
+                .expectStatus()
+                .isCreated()
                 .expectBody(Product.class)
                 .consumeWith(System.out::println);
     }
@@ -49,9 +62,11 @@ class ProductRestControllerNaiveTest {
         client.get()
                 .uri("/products/count")
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus()
+                .isOk()
                 .expectBody(Long.class)
-                .consumeWith(count -> assertThat(count.getResponseBody()).isEqualTo(3L));
+                .consumeWith(count ->
+                        assertThat(count.getResponseBody()).isEqualTo(getIds().size()));
     }
 
     @Test
@@ -59,22 +74,26 @@ class ProductRestControllerNaiveTest {
         client.delete()
                 .uri("/products")
                 .exchange()
-                .expectStatus().isNoContent();
+                .expectStatus()
+                .isNoContent();
         client.get()
                 .uri("/products/count")
                 .exchange()
-                .expectStatus().isOk()
+                .expectStatus()
+                .isOk()
                 .expectBody(Long.class)
                 .consumeWith(count -> assertThat(count.getResponseBody()).isEqualTo(0L));
     }
 
     @Test
     void findById() {
-        client.get()
-                .uri("/products/1")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(Product.class)
-                .consumeWith(System.out::println);
+        getIds().forEach(id ->
+                client.get()
+                        .uri("/products/{id}", id)
+                        .exchange()
+                        .expectStatus()
+                        .isOk()
+                        .expectBody(Product.class)
+                        .consumeWith(System.out::println));
     }
 }
