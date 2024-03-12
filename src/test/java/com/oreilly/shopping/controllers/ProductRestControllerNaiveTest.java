@@ -37,8 +37,7 @@ class ProductRestControllerNaiveTest {
         client.get()
                 .uri("/products")
                 .exchange()
-                .expectStatus()
-                .isOk()
+                .expectStatus().isOk()
                 .expectBodyList(Product.class)
                 .consumeWith(System.out::println);
     }
@@ -51,8 +50,7 @@ class ProductRestControllerNaiveTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(bat), Product.class)
                 .exchange()
-                .expectStatus()
-                .isCreated()
+                .expectStatus().isCreated()
                 .expectBody(Product.class)
                 .consumeWith(System.out::println);
     }
@@ -62,8 +60,7 @@ class ProductRestControllerNaiveTest {
         client.get()
                 .uri("/products/count")
                 .exchange()
-                .expectStatus()
-                .isOk()
+                .expectStatus().isOk()
                 .expectBody(Long.class)
                 .consumeWith(count ->
                         assertThat(count.getResponseBody()).isEqualTo(getIds().size()));
@@ -74,15 +71,13 @@ class ProductRestControllerNaiveTest {
         client.delete()
                 .uri("/products")
                 .exchange()
-                .expectStatus()
-                .isNoContent();
+                .expectStatus().isNoContent();
         client.get()
                 .uri("/products/count")
                 .exchange()
-                .expectStatus()
-                .isOk()
+                .expectStatus().isOk()
                 .expectBody(Long.class)
-                .consumeWith(count -> assertThat(count.getResponseBody()).isEqualTo(0L));
+                .consumeWith(count -> assertThat(count.getResponseBody()).isZero());
     }
 
     @Test
@@ -91,8 +86,7 @@ class ProductRestControllerNaiveTest {
                 client.get()
                         .uri("/products/{id}", id)
                         .exchange()
-                        .expectStatus()
-                        .isOk()
+                        .expectStatus().isOk()
                         .expectBody(Product.class)
                         .consumeWith(System.out::println));
     }
