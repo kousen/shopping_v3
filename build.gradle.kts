@@ -1,14 +1,17 @@
 plugins {
     java
-    id("org.springframework.boot") version "3.4.0"
-    id("io.spring.dependency-management") version "1.1.6"
-    id("org.hibernate.orm") version "6.6.2.Final"
-    id("org.graalvm.buildtools.native") version "0.10.3"
+    id("org.springframework.boot") version "3.4.4"
+    id("io.spring.dependency-management") version "1.1.7"
 }
 
 group = "com.oreilly"
 version = "1.0"
-java.sourceCompatibility = JavaVersion.VERSION_17
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
 repositories {
     mavenCentral()
@@ -31,12 +34,6 @@ dependencies {
         artifact {
             classifier = "osx-aarch_64"
         }
-    }
-}
-
-hibernate {
-    enhancement {
-        enableAssociationManagement = true
     }
 }
 
